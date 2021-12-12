@@ -45,6 +45,11 @@ CREATE TABLE Nurses (
 	OperatingRoomId int FOREIGN KEY REFERENCES OperatingRooms(RoomNumber)
 )
 
+CREATE TABLE Specialties (
+	Id int IDENTITY(1,1) PRIMARY KEY,
+	NameOfSpecialty nvarchar(50) NOT NULL
+)
+
 CREATE TABLE Surgeons (
 	OIB nvarchar(11) PRIMARY KEY,
 	FirstName nvarchar(50) NOT NULL,
@@ -54,12 +59,17 @@ CREATE TABLE Surgeons (
 	PhoneNumber nvarchar(50) NOT NULL  UNIQUE,
 	DateOfBirth date NOT NULL,
 	PlaceOfBirth int FOREIGN KEY REFERENCES Location(Id) NOT NULL,
-	Specialty nvarchar(50) NOT NULL
+	Specialty int FOREIGN KEY REFERENCES Specialties(Id) NOT NULL
 )
 
-CREATE TABLE Surgeries(
+CREATE TABLE TypesOfSurgery (
 	Id int IDENTITY(1,1) PRIMARY KEY,
-	TypeOfSurgery nvarchar(100) NOT NULL,
+	SurgeryType nvarchar(50) NOT NULL
+)
+
+CREATE TABLE Surgeries (
+	Id int IDENTITY(1,1) PRIMARY KEY,
+	SurgeryType int FOREIGN KEY REFERENCES TypesOfSurgery(Id) NOT NULL,
 	PatientId nvarchar(11) FOREIGN KEY REFERENCES Patients(OIB) NOT NULL,
 	SurgeonId nvarchar(11) FOREIGN KEY REFERENCES Surgeons(OIB) NOT NULL,
 	DateOfSurgery date NOT NULL,
@@ -110,26 +120,40 @@ INSERT INTO Nurses(OIB, FirstName, LastName, Address, CurrentLocation, PhoneNumb
 ('53636564564', 'Ana', 'Jurić', 'Solinska 15', 1, '0900100200', '1970-12-22', 1, 7, 2),
 ('45345435436', 'Ivana', 'Šimić', 'Solinska 15', 1, '091 645 6444', '1985-04-03', 4, 1, NULL)
 
-INSERT INTO Surgeons(OIB, FirstName, LastName, Address, CurrentLocation, PhoneNumber, DateOfBirth, PlaceOfBirth, Specialty) VALUES 
-('45345435436', 'Šima', 'Kirurgović', 'Gotovčeva 2', 1, '095 5555555', '1991-05-21', 2, 'Neurosurgery'),
-('34534543543', 'Josip', 'Šimunović', 'Krivi put 10', 3, '989999999', '1996-11-01', 1, 'General surgery'),
-('14124343214', 'Matija', 'Neznanić', 'Velebitska 101', 1, '99 990 0909', '1997-11-21', 5, 'Plastic surgery'),
-('67876976987', 'Ante', 'Anić', 'Poljička 99', 1, '091 190 190', '1970-03-30', 1, 'Cardiac Surgery'),
-('56765756765', 'Ana', 'Antić', 'Trg Gaje Bulata 1', 1, '919109100', '1975-11-20', 4, 'Neurosurgery')
+INSERT INTO Specialties(NameOfSpecialty) VALUES
+('Neurosurgery'),
+('General surgery'),
+('Plastic surgery'),
+('Cardiac Surgery')
 
-INSERT INTO Surgeries(TypeOfSurgery, PatientId, SurgeonId, DateOfSurgery, TimeOfSurgery, OperatingRoomId) VALUES
-('Appendectomy', '23432532532', '45345435436', '2021-12-08', '00:30:00', 1),
-('Cataract surgery', '45757457457', '14124343214', '2021-12-08', '14:23:00', 2),
-('Cholecystectomy', '34345436436', '56765756765', '2021-12-09', '12:32:00', 1),
-('Coronary artery bypass', '23432532532', '14124343214', '2021-12-09', '22:33:00', 1),
-('Debridement of wound', '45757457457', '14124343214', '2021-12-09', '10:22:00', 3),
-('Cataract surgery', '36536456456', '67876976987', '2021-12-09', '00:59:00', 3),
-('Appendectomy', '34545435435', '45345435436', '2021-12-09', '15:19:00', 2),
-('Cholecystectomy', '97987213423', '56765756765', '2021-12-10', '05:16:00', 2),
-('Cataract surgery', '23432532532', '45345435436', '2021-12-10', '23:24:00', 1),
-('Coronary artery bypass', '12312321321', '14124343214', '2021-12-10', '00:35:00', 2),
-('Cholecystectomy', '87687687687', '56765756765', '2021-12-10', '04:42:00', 3),
-('Cataract surgery', '45757457457', '45345435436', '2021-12-10', '14:34:00', 2)
+INSERT INTO Surgeons(OIB, FirstName, LastName, Address, CurrentLocation, PhoneNumber, DateOfBirth, PlaceOfBirth, Specialty) VALUES 
+('45345435436', 'Šima', 'Kirurgović', 'Gotovčeva 2', 1, '095 5555555', '1991-05-21', 2, 1),
+('34534543543', 'Josip', 'Šimunović', 'Krivi put 10', 3, '989999999', '1996-11-01', 1, 2),
+('14124343214', 'Matija', 'Neznanić', 'Velebitska 101', 1, '99 990 0909', '1997-11-21', 5, 3),
+('67876976987', 'Ante', 'Anić', 'Poljička 99', 1, '091 190 190', '1970-03-30', 1, 4),
+('56765756765', 'Ana', 'Antić', 'Trg Gaje Bulata 1', 1, '919109100', '1975-11-20', 4, 2)
+
+INSERT INTO TypesOfSurgery(SurgeryType) VALUES
+('Appendectomy'),
+('Cataract surgery'),
+('Cholecystectomy'),
+('Coronary artery bypass'),
+('Debridement of wound')
+
+INSERT INTO Surgeries(SurgeryType, PatientId, SurgeonId, DateOfSurgery, TimeOfSurgery, OperatingRoomId) VALUES
+(1, '23432532532', '45345435436', '2021-12-08', '00:30:00', 1),
+(2, '45757457457', '14124343214', '2021-12-08', '14:23:00', 2),
+(3, '34345436436', '56765756765', '2021-12-09', '12:32:00', 1),
+(4, '23432532532', '14124343214', '2021-12-09', '22:33:00', 1),
+(5, '45757457457', '14124343214', '2021-12-09', '10:22:00', 3),
+(2, '36536456456', '67876976987', '2021-12-09', '00:59:00', 3),
+(1, '34545435435', '45345435436', '2021-12-09', '15:19:00', 2),
+(3, '97987213423', '56765756765', '2021-12-10', '05:16:00', 2),
+(2, '23432532532', '45345435436', '2021-12-10', '23:24:00', 1),
+(4, '12312321321', '14124343214', '2021-12-10', '00:35:00', 2),
+(3, '87687687687', '56765756765', '2021-12-10', '04:42:00', 3),
+(2, '45757457457', '45345435436', '2021-12-10', '14:34:00', 2)
+
 
 SELECT * FROM Surgeries WHERE DateOfSurgery = '2021-12-10' ORDER BY TimeOfSurgery ASC
 
